@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Mail, Lock, User, UserPlus, Music } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import GlassCard from '@/components/ui/GlassCard';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Mail, Lock, User, UserPlus, Music } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import GlassCard from "@/components/ui/GlassCard";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const Signup: React.FC = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
@@ -25,15 +25,15 @@ const Signup: React.FC = () => {
     try {
       await signup(name, email, password);
       toast({
-        title: 'Account created!',
-        description: 'Welcome to MoodTunes. Let\'s find your perfect music.',
+        title: "Account created!",
+        description: "Welcome to MoodTunes. Let's find your perfect music.",
       });
-      navigate('/home');
+      navigate("/home");
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Could not create account. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Could not create account. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -58,7 +58,9 @@ const Signup: React.FC = () => {
               <Music className="w-8 h-8 text-background" />
             </motion.div>
             <h1 className="text-2xl font-display font-bold">Create Account</h1>
-            <p className="text-muted-foreground mt-2">Start your emotional music journey</p>
+            <p className="text-muted-foreground mt-2">
+              Start your emotional music journey
+            </p>
           </div>
 
           {/* Form */}
@@ -120,7 +122,7 @@ const Signup: React.FC = () => {
               {isLoading ? (
                 <motion.div
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                   className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full"
                 />
               ) : (
@@ -134,7 +136,7 @@ const Signup: React.FC = () => {
 
           {/* Footer */}
           <p className="text-center text-muted-foreground mt-6">
-            Already have an account?{' '}
+            Already have an account?{" "}
             <Link to="/login" className="text-primary hover:underline">
               Sign in
             </Link>
