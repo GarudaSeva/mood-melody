@@ -1,4 +1,4 @@
-# Welcome to Enotional Music Recomendation System
+# Euphony
 
 Follow these steps:
 

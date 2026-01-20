@@ -41,7 +41,7 @@ const Navbar: React.FC = () => {
               <Music className="w-5 h-5 text-background" />
             </motion.div>
             <span className="font-display font-bold text-xl gradient-text hidden sm:block">
-              Multimodal Emotion Based Music Recomender
+              Euphony
             </span>
           </Link>
 

@@ -53,7 +53,7 @@ const About: React.FC = () => {
           </motion.div>
           
           <h1 className="text-3xl md:text-4xl font-display font-bold mb-4">
-            About <span className="gradient-text"> Multimodal Emotion Based Music Recomender</span>
+            About <span className="gradient-text">Euphony</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             An AI-powered music recommendation system that understands your emotions
