@@ -31,7 +31,7 @@ const Login: React.FC = () => {
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Invalid credentials. Please try again.',
+        description: error instanceof Error ? error.message : 'Invalid credentials. Please try again.',
         variant: 'destructive',
       });
     } finally {

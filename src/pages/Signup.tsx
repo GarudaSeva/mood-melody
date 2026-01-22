@@ -32,7 +32,7 @@ const Signup: React.FC = () => {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Could not create account. Please try again.",
+        description: error instanceof Error ? error.message : "Could not create account. Please try again.",
         variant: "destructive",
       });
     } finally {

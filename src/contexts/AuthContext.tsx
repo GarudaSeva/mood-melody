@@ -11,85 +11,60 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const API_BASE_URL = 'http://localhost:5000/api/auth';
+
+const buildUser = (data: { id?: string; username?: string; email?: string }, fallbackEmail: string, fallbackName: string): User => ({
+  id: data.id || '1',
+  name: data.username || fallbackName,
+  email: data.email || fallbackEmail,
+});
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
   const login = async (email: string, password: string) => {
-    try {
-      const payload = { email, password };
-      console.log('Login request payload:', payload);
+    const response = await fetch(`${API_BASE_URL}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
 
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+    const data = await response.json();
 
-      console.log('Login response status:', response.status);
-      const data = await response.json();
-      console.log('Login response data:', data);
+    if (!response.ok) {
+      throw new Error(data.error || data.message || 'Login failed');
+    }
 
-      if (!response.ok) {
-        throw new Error(data.error || data.message || 'Login failed');
-      }
+    setUser(buildUser(data.user || {}, email, email.split('@')[0]));
 
-      setUser({
-        id: data.user?.id || '1',
-        name: data.user?.username || email.split('@')[0],
-        email: data.user?.email || email,
-      });
-
-      // Store token if provided
-      if (data.token) {
-        localStorage.setItem('authToken', data.token);
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+    if (data.token) {
+      localStorage.setItem('authToken', data.token);
     }
   };
 
   const signup = async (name: string, email: string, password: string) => {
-    try {
-      const payload = { username: name, email, password };
-      console.log('Signup request payload:', payload);
+    const response = await fetch(`${API_BASE_URL}/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: name, email, password }),
+    });
 
-      const response = await fetch('http://localhost:5000/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+    const data = await response.json();
 
-      console.log('Signup response status:', response.status);
-      const data = await response.json();
-      console.log('Signup response data:', data);
+    if (!response.ok) {
+      throw new Error(data.error || data.message || 'Signup failed');
+    }
 
-      if (!response.ok) {
-        throw new Error(data.error || data.message || 'Signup failed');
-      }
+    setUser(buildUser(data.user || {}, email, name));
 
-      setUser({
-        id: '1',
-        name: name,
-        email: email,
-      });
-
-      // Store token if provided
-      if (data.token) {
-        localStorage.setItem('authToken', data.token);
-      }
-    } catch (error) {
-      console.error('Signup error:', error);
-      throw error;
+    if (data.token) {
+      localStorage.setItem('authToken', data.token);
     }
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('authToken');
   };
 
   return (
