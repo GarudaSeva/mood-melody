@@ -6,7 +6,8 @@ import GlassCard from '@/components/ui/GlassCard';
 import EmotionBadge from '@/components/ui/EmotionBadge';
 import SongCard from '@/components/music/SongCard';
 import { Emotion } from '@/lib/types';
-import { mockDetectFaceEmotion, getSongsByEmotion } from '@/lib/mockData';
+import { getSongsByEmotion } from '@/lib/mockData';
+import { API_BASE_URL } from '@/lib/api';
 
 const FaceDetection: React.FC = () => {
   const [isCameraOn, setIsCameraOn] = useState(false);
@@ -59,7 +60,6 @@ const FaceDetection: React.FC = () => {
       canvas.width = videoRef.current.videoWidth;
       canvas.height = videoRef.current.videoHeight;
       const ctx = canvas.getContext('2d');
-      
       if (ctx) {
         // Mirror the image for selfie view
         ctx.translate(canvas.width, 0);
@@ -67,16 +67,34 @@ const FaceDetection: React.FC = () => {
         ctx.drawImage(videoRef.current, 0, 0);
         const imageData = canvas.toDataURL('image/jpeg', 0.9);
         setCapturedImage(imageData);
-      }
 
+        // Send image to backend for emotion detection
+        setIsAnalyzing(true);
+        try {
+          // Convert base64 to Blob
+          const blob = await (await fetch(imageData)).blob();
+          const formData = new FormData();
+          formData.append('image', blob, 'capture.jpg');
+          const res = await fetch(`${API_BASE_URL.replace('/auth', '/emotion')}/detect-emotion`, {
+            method: 'POST',
+            body: formData,
+          });
+          const data = await res.json();
+          if (data && data.emotion) {
+            setDetectedEmotion(data.emotion.toLowerCase());
+          } else {
+            setDetectedEmotion(null);
+            setCameraError(data.error || 'Could not detect emotion.');
+          }
+        } catch (err) {
+          setDetectedEmotion(null);
+          setCameraError('Error connecting to emotion API.');
+        } finally {
+          setIsAnalyzing(false);
+        }
+      }
       // Stop the camera after capture
       stopCamera();
-
-      // Analyze emotion (mock)
-      setIsAnalyzing(true);
-      const emotion = await mockDetectFaceEmotion();
-      setDetectedEmotion(emotion);
-      setIsAnalyzing(false);
     }
   };
 
