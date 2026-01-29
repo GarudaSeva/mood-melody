@@ -15,6 +15,7 @@ import Recommendations from "./pages/Recommendations";
 import Explore from "./pages/Explore";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import ForgotPassword from "./pages/ForgotPassword";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/recommendations" element={<Recommendations />} />
               <Route path="/explore" element={<Explore />} />
               <Route path="/about" element={<About />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>

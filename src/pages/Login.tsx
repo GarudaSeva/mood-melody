@@ -116,10 +116,19 @@ const Login: React.FC = () => {
 
           {/* Footer */}
           <p className="text-center text-muted-foreground mt-6">
-            Don't have an account?{' '}
-            <Link to="/signup" className="text-primary hover:underline">
-              Sign up
-            </Link>
+            <div className="flex flex-col gap-2">
+              <span>
+                Don't have an account?{' '}
+                <Link to="/signup" className="text-primary hover:underline">
+                  Sign up
+                </Link>
+              </span>
+              <span>
+                <Link to="/forgot-password" className="text-primary hover:underline">
+                  Forgot Password?
+                </Link>
+              </span>
+            </div>
           </p>
         </GlassCard>
       </motion.div>
