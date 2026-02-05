@@ -8,7 +8,8 @@ import EmotionBadge from '@/components/ui/EmotionBadge';
 import SongCard from '@/components/music/SongCard';
 import EmotionFilter from '@/components/music/EmotionFilter';
 import { Emotion } from '@/lib/types';
-import { mockSongs, getSongsByEmotion } from '@/lib/mockData';
+import { getSongsByEmotion } from '@/lib/mockData';
+import { getAllSongs } from '@/lib/musicData';
 
 const Recommendations: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -16,7 +17,7 @@ const Recommendations: React.FC = () => {
   const [selectedEmotion, setSelectedEmotion] = useState<Emotion | null>(initialEmotion);
 
   const filteredSongs = useMemo(() => {
-    if (!selectedEmotion) return mockSongs;
+    if (!selectedEmotion) return getAllSongs();
     return getSongsByEmotion(selectedEmotion);
   }, [selectedEmotion]);
 

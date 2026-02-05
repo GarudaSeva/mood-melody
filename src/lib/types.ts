@@ -1,5 +1,25 @@
 export type Emotion = 'happy' | 'sad' | 'angry' | 'calm' | 'excited' | 'neutral';
 
+// Mapping from backend emotion labels to frontend Emotion type
+export const emotionMapping: Record<string, Emotion> = {
+  'joy': 'happy',
+  'happy': 'happy',
+  'sadness': 'sad',
+  'sad': 'sad',
+  'anger': 'angry',
+  'angry': 'angry',
+  'fear': 'calm',
+  'disgust': 'sad',
+  'shame': 'sad',
+  'surprise': 'excited',
+  'neutral': 'neutral',
+};
+
+export function mapBackendEmotion(backendEmotion: string): Emotion {
+  const mapped = emotionMapping[backendEmotion.toLowerCase()];
+  return mapped || 'neutral';
+}
+
 export interface Song {
   id: string;
   title: string;
@@ -7,6 +27,7 @@ export interface Song {
   emotion: Emotion;
   coverUrl: string;
   duration: string;
+  audioUrl?: string;
 }
 
 export interface User {

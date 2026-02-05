@@ -1,4 +1,5 @@
 import { Song, Emotion } from './types';
+import { getSongsByEmotion as getRealSongs } from './musicData';
 
 export const mockSongs: Song[] = [
   // Happy songs
@@ -45,7 +46,9 @@ export const mockSongs: Song[] = [
 ];
 
 export const getSongsByEmotion = (emotion: Emotion): Song[] => {
-  return mockSongs.filter(song => song.emotion === emotion);
+  // Get real songs from musicData first
+  const realSongs = getRealSongs(emotion);
+  return realSongs;
 };
 
 export const detectEmotionFromText = (text: string): Emotion => {

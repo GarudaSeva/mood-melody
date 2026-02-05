@@ -5,13 +5,14 @@ import GlassCard from '@/components/ui/GlassCard';
 import SongCard from '@/components/music/SongCard';
 import EmotionFilter from '@/components/music/EmotionFilter';
 import { Emotion } from '@/lib/types';
-import { mockSongs, getSongsByEmotion } from '@/lib/mockData';
+import { getSongsByEmotion } from '@/lib/mockData';
+import { getAllSongs } from '@/lib/musicData';
 
 const Explore: React.FC = () => {
   const [selectedEmotion, setSelectedEmotion] = useState<Emotion | null>(null);
 
   const filteredSongs = useMemo(() => {
-    if (!selectedEmotion) return mockSongs;
+    if (!selectedEmotion) return getAllSongs();
     return getSongsByEmotion(selectedEmotion);
   }, [selectedEmotion]);
 

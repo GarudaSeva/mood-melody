@@ -6,14 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import GlassCard from '@/components/ui/GlassCard';
 import EmotionBadge from '@/components/ui/EmotionBadge';
-import { Emotion, emotionConfig } from '@/lib/types';
-import { detectEmotionFromText } from '@/lib/mockData';
+import { Emotion, emotionConfig, mapBackendEmotion } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
 
 const TextDetection: React.FC = () => {
   const [text, setText] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [detectedEmotion, setDetectedEmotion] = useState<Emotion | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const quickEmojis = ['😊', '😢', '😠', '😌', '🎉', '😐', '❤️', '💔', '🔥', '🧘'];
 
@@ -21,10 +23,42 @@ const TextDetection: React.FC = () => {
     if (!text.trim()) return;
     
     setIsAnalyzing(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    const emotion = detectEmotionFromText(text);
-    setDetectedEmotion(emotion);
-    setIsAnalyzing(false);
+    setError(null);
+    
+    try {
+      const response = await fetch('http://localhost:5000/api/text-emotion/detect-text-emotion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.emotion) {
+        const mappedEmotion = mapBackendEmotion(data.emotion);
+        setDetectedEmotion(mappedEmotion);
+        toast({
+          title: 'Emotion detected!',
+          description: `Your text expresses ${data.emotion}`,
+        });
+      } else {
+        setError(data.error || 'Could not detect emotion');
+        toast({
+          title: 'Error',
+          description: data.error || 'Could not detect emotion',
+          variant: 'destructive',
+        });
+      }
+    } catch (err) {
+      setError('Error connecting to emotion API');
+      toast({
+        title: 'Error',
+        description: 'Could not connect to emotion detection service',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const reset = () => {

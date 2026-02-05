@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Pause, Music } from 'lucide-react';
 import { Song, emotionConfig } from '@/lib/types';
@@ -12,7 +12,31 @@ interface SongCardProps {
 
 const SongCard: React.FC<SongCardProps> = ({ song, index }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const config = emotionConfig[song.emotion];
+
+  useEffect(() => {
+    if (song.audioUrl) {
+      audioRef.current = new Audio(song.audioUrl);
+      audioRef.current.addEventListener('ended', () => setIsPlaying(false));
+    }
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.remove();
+      }
+    };
+  }, [song.audioUrl]);
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
 
   return (
     <motion.div
@@ -30,21 +54,27 @@ const SongCard: React.FC<SongCardProps> = ({ song, index }) => {
               'bg-gradient-to-br from-muted to-muted/50'
             )}
           >
-            <Music className="w-8 h-8 text-muted-foreground" />
+            {song.coverUrl ? (
+              <img src={song.coverUrl} alt={song.title} className="w-full h-full object-cover" />
+            ) : (
+              <Music className="w-8 h-8 text-muted-foreground" />
+            )}
             
-            {/* Play button overlay */}
-            <motion.button
-              initial={{ opacity: 0 }}
-              whileHover={{ opacity: 1 }}
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm"
-            >
-              {isPlaying ? (
-                <Pause className="w-6 h-6 text-primary" />
-              ) : (
-                <Play className="w-6 h-6 text-primary fill-primary" />
-              )}
-            </motion.button>
+            {/* Play button overlay - only show if song has audioUrl */}
+            {song.audioUrl && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                whileHover={{ opacity: 1 }}
+                onClick={togglePlay}
+                className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm"
+              >
+                {isPlaying ? (
+                  <Pause className="w-6 h-6 text-primary" />
+                ) : (
+                  <Play className="w-6 h-6 text-primary fill-primary" />
+                )}
+              </motion.button>
+            )}
           </motion.div>
 
           {/* Song Info */}
