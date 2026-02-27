@@ -20,7 +20,11 @@ const buildUser = (data: { id?: string; username?: string; email?: string }, fal
 });
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    // Initial check for persisted user
+    const savedUser = localStorage.getItem('userData');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
 
   const login = async (email: string, password: string) => {
     const response = await fetch(`${API_BASE_URL}/login`, {
@@ -35,7 +39,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       throw new Error(data.error || data.message || 'Login failed');
     }
 
-    setUser(buildUser(data.user || {}, email, email.split('@')[0]));
+    const userData = buildUser(data.user || {}, email, data.user?.username || email.split('@')[0]);
+    setUser(userData);
+    localStorage.setItem('userData', JSON.stringify(userData));
 
     if (data.token) {
       localStorage.setItem('authToken', data.token);
@@ -55,7 +61,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       throw new Error(data.error || data.message || 'Signup failed');
     }
 
-    setUser(buildUser(data.user || {}, email, name));
+    const userData = buildUser(data.user || {}, email, name);
+    setUser(userData);
+    localStorage.setItem('userData', JSON.stringify(userData));
 
     if (data.token) {
       localStorage.setItem('authToken', data.token);
@@ -65,6 +73,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = () => {
     setUser(null);
     localStorage.removeItem('authToken');
+    localStorage.removeItem('userData');
+    // Force a redirect to landing or login
+    window.location.href = '/';
   };
 
   return (

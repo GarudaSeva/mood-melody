@@ -28,6 +28,7 @@ export interface Song {
   coverUrl: string;
   duration: string;
   audioUrl?: string;
+  itunesUrl?: string;
 }
 
 export interface User {

@@ -17,6 +17,8 @@ import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/ForgotPassword";
 
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -31,13 +33,16 @@ const App = () => (
               <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/face-detection" element={<FaceDetection />} />
-              <Route path="/text-detection" element={<TextDetection />} />
-              <Route path="/recommendations" element={<Recommendations />} />
-              <Route path="/explore" element={<Explore />} />
               <Route path="/about" element={<About />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              
+              {/* Protected Routes */}
+              <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+              <Route path="/face-detection" element={<ProtectedRoute><FaceDetection /></ProtectedRoute>} />
+              <Route path="/text-detection" element={<ProtectedRoute><TextDetection /></ProtectedRoute>} />
+              <Route path="/recommendations" element={<ProtectedRoute><Recommendations /></ProtectedRoute>} />
+              <Route path="/explore" element={<ProtectedRoute><Explore /></ProtectedRoute>} />
+              
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>

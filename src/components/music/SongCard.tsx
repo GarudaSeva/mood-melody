@@ -28,7 +28,9 @@ const SongCard: React.FC<SongCardProps> = ({ song, index }) => {
     };
   }, [song.audioUrl]);
 
-  const togglePlay = () => {
+  const togglePlay = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (!audioRef.current) return;
     if (isPlaying) {
       audioRef.current.pause();
@@ -83,10 +85,23 @@ const SongCard: React.FC<SongCardProps> = ({ song, index }) => {
             <p className="text-sm text-muted-foreground truncate">{song.artist}</p>
           </div>
 
-          {/* Emotion Tag */}
-          <div className="hidden sm:flex flex-col items-end gap-1">
-            <span className="text-lg">{config.emoji}</span>
-            <span className="text-xs text-muted-foreground">{song.duration}</span>
+          {/* Details and iTunes Link */}
+          <div className="flex flex-col items-end gap-2">
+            <div className="flex items-center gap-1">
+              <span className="text-lg">{config.emoji}</span>
+              <span className="text-xs text-muted-foreground">{song.duration}</span>
+            </div>
+            {song.itunesUrl && (
+              <a 
+                href={song.itunesUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="text-[10px] text-primary hover:underline font-medium"
+              >
+                View on iTunes
+              </a>
+            )}
           </div>
         </div>
 

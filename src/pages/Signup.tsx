@@ -20,13 +20,36 @@ const Signup: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Strict Password Validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      toast({
+        title: "Weak Password",
+        description: "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Strict Email Validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       await signup(name, email, password);
       toast({
         title: "Account created!",
-        description: "Welcome to MoodTunes. Let's find your perfect music.",
+        description: "Welcome. Let's find your perfect music.",
       });
       navigate("/home");
     } catch (error) {
@@ -109,7 +132,6 @@ const Signup: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10 bg-muted/50 border-border"
                   required
-                  minLength={6}
                 />
               </div>
             </div>
