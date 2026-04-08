@@ -1,17 +1,16 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { User } from '@/lib/types';
+import { API_BASE_URL } from '@/lib/api';
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (name: string, email: string, password: string, otp: string) => Promise<void>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const API_BASE_URL = 'http://localhost:5000/api/auth';
 
 const buildUser = (data: { id?: string; username?: string; email?: string }, fallbackEmail: string, fallbackName: string): User => ({
   id: data.id || '1',
@@ -48,11 +47,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const signup = async (name: string, email: string, password: string) => {
+  const signup = async (name: string, email: string, password: string, otp: string) => {
     const response = await fetch(`${API_BASE_URL}/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: name, email, password }),
+      body: JSON.stringify({ username: name, email, password, otp }),
     });
 
     const data = await response.json();
